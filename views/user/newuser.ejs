@@ -1,0 +1,111 @@
+<body> <script>
+    // Function to toggle fields based on role
+    function toggleFields() {
+        const role = document.getElementById('role').value;
+        const jobSeekerFields = document.getElementById('jobSeekerFields');
+        const employerFields = document.getElementById('employerFields');
+
+        if (role === 'jobSeeker') {
+            jobSeekerFields.style.display = 'block';
+            employerFields.style.display = 'none';
+        } else if (role === 'employer') {
+            jobSeekerFields.style.display = 'none';
+            employerFields.style.display = 'block';
+        } else {
+            jobSeekerFields.style.display = 'none';
+            employerFields.style.display = 'none';
+        }
+    }
+</script>
+  <div class="container mt-5">
+    <h1 class="text-center">Create New User</h1>
+    <form action="/users" method="POST" class="mt-4">
+      <!-- Name -->
+      <div class="mb-3">
+        <label for="name" class="form-label">Name</label>
+        <input
+          type="text"
+          name="name"
+          id="name"
+          class="form-control"
+          required
+        />
+      </div>
+
+      <!-- Email -->
+      <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input
+          type="email"
+          name="email"
+          id="email"
+          class="form-control"
+          required
+        />
+      </div>
+
+      <!-- Password -->
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input
+          type="password"
+          name="password"
+          id="password"
+          class="form-control"
+          required
+        />
+      </div>
+
+      <!-- Role -->
+      <div class="mb-3">
+        <label for="role" class="form-label">Role</label>
+        <select
+          name="role"
+          id="role"
+          class="form-select"
+          onchange="toggleFields()"
+          required
+        >
+          <option value="">Select Role</option>
+          <option value="jobSeeker">Job Seeker</option>
+          <option value="employer">Employer</option>
+        </select>
+      </div>
+
+      <!-- Job Seeker Fields -->
+      <div id="jobSeekerFields" style="display: none">
+        <div class="mb-3">
+          <label for="skills" class="form-label">Skills</label>
+          <input
+            type="text"
+            name="skills"
+            id="skills"
+            class="form-control"
+            placeholder="Comma-separated skills"
+          />
+        </div>
+      </div>
+
+      <!-- Employer Fields -->
+      <div id="employerFields" style="display: none">
+        <div class="mb-3">
+          <label for="company" class="form-label">Company Name</label>
+          <input type="text" name="company" id="company" class="form-control" />
+        </div>
+      </div>
+
+      <!-- Common Fields -->
+      <div class="mb-3">
+        <label for="bio" class="form-label">Bio</label>
+        <textarea name="bio" id="bio" class="form-control" rows="3"></textarea>
+      </div>
+      <div class="mb-3">
+        <label for="location" class="form-label">Location</label>
+        <input type="text" name="location" id="location" class="form-control" />
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" class="btn btn-primary">Create User</button>
+    </form>
+  </div>
+</body>
