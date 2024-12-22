@@ -2,7 +2,7 @@
 <body>
   <div class="container">
     <% for(job of jobs){ %>
-    <a href="#" style="text-decoration: none;">
+    <a href="/job/<%= job._id %>" style="text-decoration: none;">
     <div class="card mt-4">
       <div class="card-body">
         <h5 class="card-title"><%= job.title %></h5>

@@ -41,11 +41,11 @@ app.get("/", async function (req, res) {
   }
 });
 
-app.get("/users/new", (req, res) => {
+app.get("/signup", (req, res) => {
   res.render("user/newuser.ejs");
 });
 
-app.post("/users", async (req, res) => {
+app.post("/signup", async (req, res) => {
   try {
     const { name, email, password, role, skills, company, bio, location } =
       req.body;
@@ -102,6 +102,12 @@ app.post('/new/job', async (req, res) => {
       console.error('Error adding job:', error);
       res.status(500).send('Internal Server Error');
   }
+});
+
+app.get('/job/:id', async (req, res) => {
+  let {id }= req.params;
+  let job = await Job.findById(id);
+  res.render('jobs/viewjob.ejs', {job}); // Render the EJS form for adding jobs
 });
 
 app.listen(3000);

@@ -1,28 +1,10 @@
-<body> <script>
-    // Function to toggle fields based on role
-    function toggleFields() {
-        const role = document.getElementById('role').value;
-        const jobSeekerFields = document.getElementById('jobSeekerFields');
-        const employerFields = document.getElementById('employerFields');
-
-        if (role === 'jobSeeker') {
-            jobSeekerFields.style.display = 'block';
-            employerFields.style.display = 'none';
-        } else if (role === 'employer') {
-            jobSeekerFields.style.display = 'none';
-            employerFields.style.display = 'block';
-        } else {
-            jobSeekerFields.style.display = 'none';
-            employerFields.style.display = 'none';
-        }
-    }
-</script>
+<% layout('./layout/boilerplate.ejs') -%><body> 
   <div class="container mt-5">
     <h1 class="text-center">Create New User</h1>
     <form action="/users" method="POST" class="mt-4">
       <!-- Name -->
       <div class="mb-3">
-        <label for="name" class="form-label">Name</label>
+        <label for="name" class="form-label ">Name</label>
         <input
           type="text"
           name="name"
@@ -66,14 +48,13 @@
           onchange="toggleFields()"
           required
         >
-          <option value="">Select Role</option>
           <option value="jobSeeker">Job Seeker</option>
           <option value="employer">Employer</option>
         </select>
       </div>
 
       <!-- Job Seeker Fields -->
-      <div id="jobSeekerFields" style="display: none">
+      <div id="jobSeekerFields" style="display: block">
         <div class="mb-3">
           <label for="skills" class="form-label">Skills</label>
           <input
@@ -108,4 +89,20 @@
       <button type="submit" class="btn btn-primary">Create User</button>
     </form>
   </div>
+  <script>
+    // Function to toggle fields based on role
+    function toggleFields() {
+        const role = document.getElementById('role').value;
+        const jobSeekerFields = document.getElementById('jobSeekerFields');
+        const employerFields = document.getElementById('employerFields');
+
+        if (role != 'jobSeeker') {
+            jobSeekerFields.style.display = 'none';
+            employerFields.style.display = 'block';
+        } else {
+            jobSeekerFields.style.display = 'block';
+            employerFields.style.display = 'none';
+        } 
+    }
+</script>
 </body>
