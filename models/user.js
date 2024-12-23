@@ -1,18 +1,30 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
-const UserSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: String, enum: ['jobSeeker', 'employer'], default: 'jobSeeker' },
+    role: { type: String, enum: ['jobSeeker', 'employer'], required: true },
     profile: {
         skills: [String],
         company: String,
         bio: String,
         location: String,
     },
-    appliedJobs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Application' }],
-    createdAt: { type: Date, default: Date.now },
+    jobsPosted: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Job' }]
 });
 
-module.exports = mongoose.model('User', UserSchema);
+// Hash password before saving
+userSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) return next();
+    this.password = await bcrypt.hash(this.password, 10);
+    next();
+});
+
+// Compare password
+userSchema.methods.verifyPassword = async function (password) {
+    return bcrypt.compare(password, this.password);
+};
+
+module.exports = mongoose.model('User', userSchema);

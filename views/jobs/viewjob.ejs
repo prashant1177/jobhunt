@@ -81,7 +81,18 @@
       </div>
     </div>
     <hr>
-    <button type="button" class="btn btn-primary btn-lg my-4">Apply Now</button>
+    <% if (user && user.role === "jobSeeker") { %>
+      <form action="/jobs/<%= job._id %>/apply" method="get">
+        <button type="submit" class="btn btn-primary btn-lg my-4">Apply Now</button>
+      </form>
+    <% } else if (user && user.role === "employer") { %>
+      <form action="/employer/jobs/<%= job._id %>/applications" method="get">
+        <button type="submit" class="btn btn-primary btn-lg my-4">View Applications</button>
+      </form>
+    <% } else { %>
+      <p class="text-muted">Please <a href="/login">log in</a> as a job seeker to apply for this job.</p>
+    <% } %>
+    
     
   </div>
 </body>

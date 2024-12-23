@@ -1,0 +1,17 @@
+<% layout('./layout/boilerplate.ejs') -%>
+<body>
+  <div class="container my-4">
+    <h1>Apply for <%= job.title %></h1>
+    <form action="/jobs/<%= job._id %>/apply" method="POST">
+      <div class="mb-3">
+        <label for="resume" class="form-label">Resume Link (Optional)</label>
+        <input type="text" class="form-control" id="resume" name="resume" />
+      </div>
+      <div class="mb-3">
+        <label for="additionalDetails" class="form-label">Additional Details (Optional)</label>
+        <textarea class="form-control" id="additionalDetails" name="additionalDetails" rows="3"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit Application</button>
+    </form>
+  </div>
+</body>
