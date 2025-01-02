@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const session = require('express-session');
 const passport = require('./config/passport'); // Adjust path as needed
 
+
 const bodyParser = require("body-parser");
 app.engine("ejs", engine);
 
@@ -30,6 +31,7 @@ app.use((req, res, next) => {
 
 const User = require("./models/user");
 const Job = require('./models/job');
+const Application = require("./models/application");
 
 // Connect to MongoDB
 mongoose
@@ -129,30 +131,71 @@ app.get("/jobs/:id/apply", async(req, res) => {
 
 app.post("/jobs/:id/apply", async (req, res) => {
   try {
-    if (!req.user || req.user.role !== "jobSeeker") {
-      return res.status(403).send("Only job seekers can apply for jobs.");
+    if (!req.user) {
+      return res.redirect("/login"); // Redirect if not logged in
     }
 
-    const job = await Job.findById(req.params.id);
-    if (!job) {
-      return res.status(404).send("Job not found.");
-    }
+    // Create a new application
+    const application = new Application({
+      job: req.params.id,
+      applicant: req.user._id,
+      resume: req.body.resume,
+      additionalDetails: req.body.additionalDetails
+    });
 
-    const application = {
-      jobSeekerId: req.user._id,
-      name: req.user.name, // Assuming the user schema has a 'name' field
-      email: req.user.email, // Assuming the user schema has an 'email' field
-      resume: req.body.resume || "",
-      additionalDetails: req.body.additionalDetails || "",
-    };
-
-    job.applications.push(application);
-    await job.save();
-
-    res.redirect("/"); // Redirect to the jobs page or a success page
+    await application.save();
+    res.redirect("/my-applications");
   } catch (err) {
     console.error(err);
-    res.status(500).send("An error occurred while applying.");
+    res.status(500).send("An error occurred while applying for the job.");
+  }
+});
+
+
+app.get("/dashboard", async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.redirect("/login");
+    }
+
+    // Fetch jobs posted by the logged-in user
+    const jobs = await Job.find({ postedBy: req.user._id });
+
+    // Check if jobs exist
+    if (!jobs.length) {
+      return res.render("dashboard.ejs", { jobs: [], jobApplications: [] });
+    }
+
+    // Fetch applications for these jobs
+    const jobApplications = await Promise.all(
+      jobs.map(async (job) => {
+        const applications = await Application.find({ job: job._id }).populate("applicant");
+        return { job, applications };
+      })
+    );
+
+    res.render("dashboard.ejs", { jobs, jobApplications });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("An error occurred while loading the dashboard.");
+  }
+});
+
+
+app.get("/my-applications", async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.redirect("/login"); // Redirect if not logged in
+    }
+
+    // Fetch applications made by the logged-in user
+    const applications = await Application.find({ applicant: req.user._id })
+      .populate("job");
+
+    res.render("my-applications.ejs", { applications });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("An error occurred while loading your applications.");
   }
 });
 
@@ -163,17 +206,22 @@ app.get("/employer/jobs/:id/applications", async (req, res) => {
       return res.status(403).send("Only employers can view applications.");
     }
 
+    // Fetch the job to ensure it exists
     const job = await Job.findById(req.params.id);
     if (!job) {
       return res.status(404).send("Job not found.");
     }
 
-    res.render("jobs/applications.ejs", { job });
+    // Fetch applications for the job
+    const applications = await Application.find({ job: req.params.id }).populate("applicant");
+
+    res.render("jobs/applications.ejs", { job, applications });
   } catch (err) {
     console.error(err);
     res.status(500).send("An error occurred while fetching applications.");
   }
 });
+
 
 // New Job
 app.get('/new/job', (req, res) => {
@@ -182,27 +230,32 @@ app.get('/new/job', (req, res) => {
 
 app.post('/new/job', async (req, res) => {
   try {
-      const { title, company, location, description, skills, exp, salary } = req.body;
+    if (!req.user) {
+      return res.redirect("/login");
+    }
 
-      // Create a new Job document
-      const newJob = new Job({
-          title,
-          company,
-          location,
-          description,
-          exp,
-          salary,
-          skills: skills.split(',').map(skill => skill.trim()) // Convert comma-separated string to an array
-      });
+    const { title, company, location, description, skills, exp, salary } = req.body;
 
-      // Save the job in the database
-      await newJob.save();
+    // Create a new Job document
+    const newJob = new Job({
+      title,
+      company,
+      location,
+      description,
+      exp,
+      salary,
+      skills: skills.split(',').map(skill => skill.trim()), // Convert comma-separated string to an array
+      postedBy: req.user._id // Associate the job with the logged-in user
+    });
 
-      // Redirect to the homepage or another route after saving
-      res.redirect('/');
+    // Save the job in the database
+    await newJob.save();
+
+    // Redirect to the dashboard or another route
+    res.redirect('/dashboard');
   } catch (error) {
-      console.error('Error adding job:', error);
-      res.status(500).send('Internal Server Error');
+    console.error('Error adding job:', error);
+    res.status(500).send('Internal Server Error');
   }
 });
 

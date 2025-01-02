@@ -3,10 +3,10 @@
   <div class="container my-4">
     <h1>Applications for <%= job.title %></h1>
     <ul class="list-group">
-      <% for (let application of job.applications) { %>
+      <% for (let application of applications) { %>
         <li class="list-group-item">
-          <p><strong>Name:</strong> <%= application.name %></p>
-          <p><strong>Email:</strong> <%= application.email %></p>
+          <p><strong>Name:</strong> <%= application.applicant.name %></p>
+          <p><strong>Email:</strong> <%= application.applicant.email %></p>
           <p><strong>Resume:</strong> <a href="<%= application.resume %>" target="_blank">View</a></p>
           <p><strong>Additional Details:</strong> <%= application.additionalDetails %></p>
         </li>

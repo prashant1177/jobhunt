@@ -1,0 +1,31 @@
+<% layout('./layout/boilerplate.ejs') -%>
+<body>
+  <div class="container my-4">
+    <h1>Your Applications</h1>
+    <% if (applications.length > 0) { %> <% applications.forEach(application =>
+    { %>
+    <div class="card my-3">
+      <div class="card-header">
+        <h3><%= application.job.title %></h3>
+      </div>
+      <div class="card-body">
+        <p><strong>Company:</strong> <%= application.job.company %></p>
+        <p><strong>Location:</strong> <%= application.job.location %></p>
+        <p>
+          <strong>Applied At:</strong> <%= application.appliedAt.toDateString()
+          %>
+        </p>
+        <p>
+          <strong>Resume:</strong> <%= application.resume || "Not Provided" %>
+        </p>
+        <p>
+          <strong>Additional Details:</strong> <%= application.additionalDetails
+          || "N/A" %>
+        </p>
+      </div>
+    </div>
+    <% }); %> <% } else { %>
+    <p>You haven't applied for any jobs yet.</p>
+    <% } %>
+  </div>
+</body>

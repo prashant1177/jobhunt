@@ -1,0 +1,38 @@
+<% layout('./layout/boilerplate.ejs') -%><body>
+    <div class="container my-4">
+      <h1>Your Posted Jobs</h1>
+      <% if (jobApplications.length > 0) { %>
+        <% jobApplications.forEach(({ job, applications }) => { %>
+          <div class="card my-3">
+            <div class="card-header">
+              <h3><%= job.title %></h3>
+            </div>
+            <div class="card-body">
+              <p><strong>Company:</strong> <%= job.company %></p>
+              <p><strong>Location:</strong> <%= job.location %></p>
+              <p><strong>Applicants:</strong> <%= applications.length %></p>
+              <% if (applications.length > 0) { %>
+                <h5>Applications:</h5>
+                <ul>
+                  <% applications.forEach(application => { %>
+                    <li>
+                      <strong>Applicant:</strong> <%= application.applicant.name %>
+                      <br>
+                      <strong>Resume:</strong> <%= application.resume || "Not Provided" %>
+                      <br>
+                      <strong>Additional Details:</strong> <%= application.additionalDetails || "N/A" %>
+                    </li>
+                  <% }); %>
+                </ul>
+              <% } else { %>
+                <p>No applications yet.</p>
+              <% } %>
+            </div>
+          </div>
+        <% }); %>
+      <% } else { %>
+        <p>You haven't posted any jobs yet.</p>
+      <% } %>
+    </div>
+  </body>
+  
