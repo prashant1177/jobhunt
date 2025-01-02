@@ -1,0 +1,73 @@
+<% layout('./layout/boilerplate.ejs') -%>
+<body>
+  <section>
+    <div class="container py-5">
+      <div class="row">
+        <!-- User Profile Section -->
+        <div class="col-lg-4">
+          <div class="card mb-4">
+            <div class="card-body text-center">
+              <img
+                src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
+                alt="<%= userDetails.name || 'User Avatar' %>"
+                class="rounded-circle img-fluid"
+                style="width: 150px"
+              />
+              <h5 class="my-3"><%= userDetails.name || "Anonymous User" %></h5>
+              <p class="text-muted mb-1">Full Stack Developer</p>
+              <p class="text-muted mb-4"><%= userDetails.email || "N/A" %></p>
+              <div class="d-flex justify-content-center mb-2">
+                <button type="button" class="btn btn-primary">Update</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Skills Section -->
+          <div class="card mb-4 mb-lg-0 p-4">
+            <h3>Skills</h3>
+            <hr />
+            <% if (userDetails?.profile?.skills?.length > 0) { %>
+              <% userDetails.profile.skills.forEach(skill => { %>
+                <p class="text-muted mb-0"><%= skill %></p>
+              <% }); %>
+            <% } else { %>
+              <p class="text-muted">No skills listed.</p>
+            <% } %>
+          </div>
+        </div>
+
+        <!-- Applications Section -->
+        <div class="col-lg-8">
+         
+          <div>
+            <% if (applications?.length > 0) { %>
+              <% applications.forEach(application => { %>
+                <div class="card mb-3">
+                  <div class="bg-light p-2">
+                    <h3><%= application.job?.title || "Unknown Job" %></h3>
+                  </div>
+                  <div class="card-body">
+                    <p><strong>Company:</strong> <%= application.job?.company || "N/A" %></p>
+                    <p><strong>Location:</strong> <%= application.job?.location || "N/A" %></p>
+                    <p><strong>Applied At:</strong> <%= application.appliedAt?.toDateString() || "N/A" %></p>
+                    <p>
+                      <strong>Resume:</strong> 
+                      <% if (application.resume) { %>
+                        <a href="<%= application.resume %>" target="_blank">View Resume</a>
+                      <% } else { %>
+                        Not Provided
+                      <% } %>
+                    </p>
+                    <p><strong>Additional Details:</strong> <%= application.additionalDetails || "N/A" %></p>
+                  </div>
+                </div>
+              <% }); %>
+            <% } else { %>
+              <p>You haven't applied for any jobs yet.</p>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>

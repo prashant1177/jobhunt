@@ -47,18 +47,39 @@ mongoose
   });
 
   
-app.get("/", async function (req, res) {
-  try {
-    // Fetch all users from the database
-    const jobs = await Job.find();
-
-    // Render the index.ejs file with the fetched users
-    res.render("index.ejs", { jobs, user: req.user || null});
-  } catch (error) {
-    console.error("Error fetching users:", error);
-    res.status(500).send("Internal Server Error");
-  }
-});
+  app.get("/", async function (req, res) {
+    try {
+      // Fetch all unique skills from jobs
+      const allSkills = await Job.distinct("skills");
+      let jobs;
+  
+      // Check if skills are selected for filtering
+      const selectedSkills = req.query.skills;
+      if (selectedSkills) {
+        const skillsArray = Array.isArray(selectedSkills)
+          ? selectedSkills.map(skill => skill.toLowerCase())
+          : [selectedSkills.toLowerCase()];
+  
+        // Find jobs matching any of the selected skills
+        jobs = await Job.find({
+          skills: { $in: skillsArray }
+        });
+      } else {
+        // Fetch all jobs if no skills are selected
+        jobs = await Job.find();
+      }
+  
+      const userDetails = req.user ? await User.findById(req.user._id).select("name profile.skills") : null;
+  
+      // Render the page with jobs and skills
+      res.render("index.ejs", { jobs, allSkills, user: userDetails });
+    } catch (error) {
+      console.error("Error fetching jobs:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  });
+  
+  
 
 app.get("/signup", (req, res) => {
   res.render("user/newuser.ejs");
@@ -181,6 +202,24 @@ app.get("/dashboard", async (req, res) => {
   }
 });
 
+
+app.get('/profile', async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.redirect("/login"); // Redirect if not logged in
+    }
+
+    // Fetch applications made by the logged-in user
+   
+    const userDetails = req.user ? await User.findById(req.user._id) : null;
+    const applications = await Application.find({ applicant: req.user._id })
+    .populate("job");
+    res.render("profile.ejs", { userDetails, applications });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("An error occurred while loading your applications.");
+  }
+});
 
 app.get("/my-applications", async (req, res) => {
   try {

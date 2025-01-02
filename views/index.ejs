@@ -1,68 +1,45 @@
 <% layout('./layout/boilerplate.ejs') -%>
 <body>
-  <div class="container">
-    <% for(job of jobs){ %>
-    <a href="/job/<%= job._id %>" style="text-decoration: none;">
-    <div class="card mt-4">
-      <div class="card-body">
-        <h5 class="card-title"><%= job.title %></h5>
-        <p class="card-text"><%= job.company %></p>
-        <p class="card-text mb-4 mt-4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="currentColor"
-            class="bi bi-person-workspace"
-            viewBox="0 0 16 16"
-          >
-            <path
-              d="M4 16s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-5.95a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"
-            />
-            <path
-              d="M2 1a2 2 0 0 0-2 2v9.5A1.5 1.5 0 0 0 1.5 14h.653a5.4 5.4 0 0 1 1.066-2H1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v9h-2.219c.554.654.89 1.373 1.066 2h.653a1.5 1.5 0 0 0 1.5-1.5V3a2 2 0 0 0-2-2z"
-            />
-          </svg>
-          <%= job.exp %>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="currentColor"
-            class="bi bi-cash"
-            viewBox="0 0 16 16"
-          >
-            <path d="M8 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4" />
-            <path
-              d="M0 4a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V6a2 2 0 0 1-2-2z"
-            />
-          </svg>
-          <%= job.salary %>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="currentColor"
-            class="bi bi-geo-alt-fill"
-            viewBox="0 0 16 16"
-          >
-            <path
-              d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"
-            />
-          </svg>
-          <%= job.location  %>
-        </p>
-        <p class="card-text mt-4">
-          <small class="text-body-secondary">
-            <%= job.createdAt %></small>
-        </p>
-        <p class="card-text mt-4">
-          <small class="text-body-secondary">
-            <%= job.postedBy %></small>
-        </p>
-      </div>
-    </div>
-  </a>
-    <% } %>
+  <div class="container my-4">
+    <div class="row">
+      <div class="col-4">
+
+    <!-- Skills Filter Form -->
+    <form action="/" method="GET">
+      <h2>Filter by Skills</h2>
+      <% for (let skill of allSkills) { %>
+        <div class="form-check mt-2">
+          <input 
+            class="form-check-input" 
+            type="checkbox" 
+            name="skills" 
+            value="<%= skill %>" 
+            id="skill-<%= skill %>">
+          <label class="form-check-label" for="skill-<%= skill %>">
+            <%= skill %>
+          </label>
+        </div>
+      <% } %>
+      <button type="submit" class="btn btn-primary my-4">Filter</button> <a href="/" class="btn btn-secondary">Remove Filter</a>
+    </form>
   </div>
+  <div class="col">
+    <h1>Job Listings</h1>
+    <ul class="list-group">
+      <% if (jobs.length > 0) { %>
+        <% for (let job of jobs) { %>
+          <a href="/job/<%= job._id %>" style="text-decoration: none;">
+          <li class="list-group-item mt-4 ">
+            <h3><%= job.title %></h3>
+            <p><%= job.description %></p>
+            <% for (let skill of job.skills) { %>
+              <span class="badge bg-secondary"><%= skill %></span>
+            <% } %>
+          </li></a>
+        <% } %>
+      <% } else { %>
+        <p>No jobs found for the selected skills.</p>
+      <% } %>
+    </ul></div>
+  </div></div>
 </body>
