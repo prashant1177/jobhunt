@@ -25,13 +25,13 @@
           d="M2 1a2 2 0 0 0-2 2v9.5A1.5 1.5 0 0 0 1.5 14h.653a5.4 5.4 0 0 1 1.066-2H1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v9h-2.219c.554.654.89 1.373 1.066 2h.653a1.5 1.5 0 0 0 1.5-1.5V3a2 2 0 0 0-2-2z"
         />
       </svg>
-      <%= job.exp %>
+      <%= job.exp || "NA" %>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="16"
         height="16"
         fill="currentColor"
-        class="bi bi-cash"
+        class="bi bi-cash ms-4"
         viewBox="0 0 16 16"
       >
         <path d="M8 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4" />
@@ -39,25 +39,25 @@
           d="M0 4a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V6a2 2 0 0 1-2-2z"
         />
       </svg>
-      <%= job.salary %><svg
+      <%= job.salary || "NA" %><svg
       xmlns="http://www.w3.org/2000/svg"
       width="16"
       height="16"
       fill="currentColor"
-      class="bi bi-geo-alt-fill"
+      class="bi bi-geo-alt-fill ms-4"
       viewBox="0 0 16 16"
     >
       <path
         d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"
       />
     </svg>
-    <%= job.location %>
+    <%= job.location || "NA" %>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="16"
         height="16"
         fill="currentColor"
-        class="bi bi-calendar"
+        class="bi bi-calendar ms-4"
         viewBox="0 0 16 16"
       >
         <path
@@ -70,13 +70,13 @@
 </div>
     <div class="my-4">
         <h4>Job Description</h4>
-        <p><%= job.description %></p></div>
+        <p><%= job.description%></p></div>
     
     <div class="my-4">
       <h4>Skills Required</h4>
       <div class="d-flex">
         <% for(skill of job.skills){%>
-        <p class="me-4 bg-light p-2 rounded"><%= skill %></p>
+        <p class="me-2 bg-dark text-white p-2 rounded"><%= skill %></p>
         <% } %>
       </div>
     </div>

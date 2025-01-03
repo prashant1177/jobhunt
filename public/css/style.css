@@ -1,0 +1,58 @@
+.bgColor {
+  background-color: #f3f5f8;
+}
+
+.bgText {
+  color: #f3f5f8;
+}
+
+.textBG {
+  background-color: #121316;
+}
+.text {
+  color: #121316;
+}
+
+.primaryColor {
+  background-color: #5b7bb6;
+}
+
+.primaryText {
+  color: #5b7bb6;
+}
+
+.secColor {
+  background-color: #93addd;
+}
+
+.secText {
+  color: #93addd;
+}
+
+.acentColor {
+  background-color: #648fde;
+}
+
+.acentText {
+  color: #648fde;
+}
+
+p,a {
+  font-family: "Poppins", serif;
+  font-weight: 300;
+  font-style: normal;
+  color: #121316;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: "Poppins", serif;
+    font-weight: 500;
+    font-style: normal;
+  
+    color: #121316;
+}

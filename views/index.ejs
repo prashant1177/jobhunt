@@ -1,14 +1,22 @@
 <% layout('./layout/boilerplate.ejs') -%>
 <body>
-  <div class="container my-4">
+  <div class="container">
+    
+    <div class="row py-2">
+      <div class="col-3 my-4 text-center">
+        </div>
+        <div class="col my-4 text-center">
+          <h4>Job Listings</h4>
+          </div>
+      </div>
     <div class="row">
-      <div class="col-4">
+      <div class="col-3 p-3" style="background-color: white;">
 
+        <h4 class="text-center mb-4">Filter by Skills</h4>
     <!-- Skills Filter Form -->
     <form action="/" method="GET">
-      <h2>Filter by Skills</h2>
       <% for (let skill of allSkills) { %>
-        <div class="form-check mt-2">
+        <div class="form-check my-2">
           <input 
             class="form-check-input" 
             type="checkbox" 
@@ -23,19 +31,19 @@
       <button type="submit" class="btn btn-primary my-4">Filter</button> <a href="/" class="btn btn-secondary">Remove Filter</a>
     </form>
   </div>
-  <div class="col">
-    <h1>Job Listings</h1>
+  <div class="col ms-4">
     <ul class="list-group">
       <% if (jobs.length > 0) { %>
         <% for (let job of jobs) { %>
-          <a href="/job/<%= job._id %>" style="text-decoration: none;">
-          <li class="list-group-item mt-4 ">
+          <a href="/job/<%= job._id %>" style="text-decoration: none; color: black;" >
+          <div class="mb-4 p-3" style="border: 0; background-color: white;">
             <h3><%= job.title %></h3>
             <p><%= job.description %></p>
+            <div>
             <% for (let skill of job.skills) { %>
               <span class="badge bg-secondary"><%= skill %></span>
-            <% } %>
-          </li></a>
+            <% } %></div>
+          </div></a>
         <% } %>
       <% } else { %>
         <p>No jobs found for the selected skills.</p>

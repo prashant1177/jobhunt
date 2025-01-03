@@ -1,9 +1,12 @@
 var express = require("express"),
   engine = require("ejs-mate"),
   app = express();
+  const path = require('path');
 const mongoose = require("mongoose");
 const session = require('express-session');
 const passport = require('./config/passport'); // Adjust path as needed
+
+const flash = require('connect-flash');
 
 
 const bodyParser = require("body-parser");
@@ -11,6 +14,7 @@ app.engine("ejs", engine);
 
 app.set("views", __dirname + "/views");
 app.set("view engine", "ejs");
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -29,6 +33,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(flash());
 const User = require("./models/user");
 const Job = require('./models/job');
 const Application = require("./models/application");
@@ -46,7 +51,13 @@ mongoose
     console.error("Error connecting to MongoDB:", err.message);
   });
 
-  
+  // Middleware
+  app.use((req, res, next) => {
+    res.locals.successMessages = req.flash('success');
+    res.locals.errorMessages = req.flash('error');
+    next();
+});
+
   app.get("/", async function (req, res) {
     try {
       // Fetch all unique skills from jobs
@@ -69,7 +80,7 @@ mongoose
         jobs = await Job.find();
       }
   
-      const userDetails = req.user ? await User.findById(req.user._id).select("name profile.skills") : null;
+      const userDetails = req.user ? await User.findById(req.user._id) : null;
   
       // Render the page with jobs and skills
       res.render("index.ejs", { jobs, allSkills, user: userDetails });
@@ -78,7 +89,11 @@ mongoose
       res.status(500).send("Internal Server Error");
     }
   });
-  
+  app.get("/about", async function (req, res) {
+    
+      // Render the page with jobs and skills
+      res.render("about.ejs");
+  });
   
 
 app.get("/signup", (req, res) => {
@@ -214,7 +229,18 @@ app.get('/profile', async (req, res) => {
     const userDetails = req.user ? await User.findById(req.user._id) : null;
     const applications = await Application.find({ applicant: req.user._id })
     .populate("job");
-    res.render("profile.ejs", { userDetails, applications });
+    const jobs = await Job.find({ postedBy: req.user._id });
+
+
+    // Fetch applications for these jobs
+    const jobApplications = await Promise.all(
+      jobs.map(async (job) => {
+        const applications = await Application.find({ job: job._id }).populate("applicant");
+        return { job, applications };
+      })
+    );
+
+    res.render("profile.ejs", { userDetails, applications, jobApplications });
   } catch (err) {
     console.error(err);
     res.status(500).send("An error occurred while loading your applications.");

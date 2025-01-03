@@ -1,6 +1,6 @@
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">Navbar</a>
+<nav class="navbar navbar-expand-lg bgColor border-bottom">
+  <div class="container">
+    <a class="navbar-brand" href="#">JOBHUNT</a>
     <button
       class="navbar-toggler"
       type="button"
@@ -15,23 +15,23 @@
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
         <a class="nav-link active" aria-current="page" href="/">Home</a>
-        <% if (user && user.role === "employer") { %>
+        <% if (user && user.role == "employer") { %>
           <a class="nav-link" href="/dashboard">Dashboard</a>
         <a class="nav-link" href="/new/job">Post Jobs</a>
         </form>
-        <% } else { %>
+        <% } else if(user && user.role == "jobSeeker") { %>
         <a class="nav-link" href="/my-applications">My Application</a>
         <% } %>
-        <a class="nav-link" href="#">About</a>
+        <a class="nav-link" href="/about">About</a>
       </div>
     </div>
     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
       <% if (user) { %>
-      <!-- Show logout button if user is logged in -->
+      <!-- Show logout button if user is logged in --><a class="nav-link" href="/profile">
+        <button class="btn acentColor" type="button">Profile</button>
+      </a>
       <a class="nav-link" href="/logout">
         <button class="btn btn-danger" type="button">Logout</button>
-      </a><a class="nav-link" href="/profile">
-        <button class="btn btn-primary" type="button">Profile</button>
       </a>
       <% } else { %>
       <!-- Show sign up and login buttons if user is not logged in -->
