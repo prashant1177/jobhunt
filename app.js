@@ -250,6 +250,26 @@ app.get("/profile", async (req, res) => {
   }
 });
 
+
+app.get("/applicant/:id", async (req, res) => {
+  try {
+    const userId = req.params.id;  // Get the user ID from the URL
+    const userDetails = await User.findById(userId);
+
+    if (!userDetails) {
+      return res.status(404).send("User not found.");
+    }
+
+    res.render("viewapplicant.ejs", { userDetails });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("An error occurred while fetching the applicant's profile.");
+  }
+});
+
+
+
+
 app.get("/my-applications", async (req, res) => {
   try {
     if (!req.user) {
@@ -347,6 +367,26 @@ app.get("/job/:id", async (req, res) => {
 
   res.render("jobs/viewjob.ejs", { job, userAuth }); // Render the EJS form for adding jobs
 });
+
+app.get("/job/:id/applications", async (req, res) => {
+  try {
+    const jobId = req.params.id;
+
+    // Fetch the job details
+    const job = await Job.findById(jobId);
+
+    // Fetch applications for the specific job
+    const applications = await Application.find({ job: jobId }).populate('applicant');
+
+    res.render('jobs/viewapplications.ejs', { job, applications, userAuth: req.user && job.postedBy.toString() === req.user._id.toString() });
+  } catch (error) {
+    console.error("Error fetching job applications:", error);
+    res.status(500).send("An error occurred while fetching applications.");
+  }
+});
+
+
+
 
 // Delete
 app.post("/jobs/:id/delete", async (req, res) => {

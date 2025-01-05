@@ -1,0 +1,21 @@
+<% layout('./layout/boilerplate.ejs') -%>
+<body>
+  <div class="container my-4">
+    <h1>Applications for <%= job.title %></h1>
+    
+    <% if (applications.length > 0) { %>
+      <ul class="list-group">
+        <% applications.forEach(application => { %>
+          <li class="list-group-item">
+            <p><strong>Applicant:</strong> <%= application.applicant.name %></p>
+            <p><strong>Resume:</strong> <%= application.resume || "Not Provided" %></p>
+            <p><strong>Additional Details:</strong> <%= application.additionalDetails || "N/A" %></p>
+            <p><a href="/applicant/<%= application.applicant._id %>">Visit Profile:</a> </p>
+          </li>
+        <% }); %>
+      </ul>
+    <% } else { %>
+      <p>No applications yet.</p>
+    <% } %>
+  </div>
+</body>

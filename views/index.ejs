@@ -38,7 +38,7 @@
           <a href="/job/<%= job._id %>" style="text-decoration: none; color: black;" >
           <div class="mb-4 p-3" style="border: 0; background-color: white;">
             <h3><%= job.title %></h3>
-            <p><%= job.description %></p>
+            <p><%= job.description.slice(0, 300) %></p>
             <div>
             <% for (let skill of job.skills) { %>
               <span class="badge bg-secondary"><%= skill %></span>

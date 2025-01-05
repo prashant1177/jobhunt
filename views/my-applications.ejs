@@ -4,6 +4,7 @@
     <h1>Your Applications</h1>
     <% if (applications.length > 0) { %> <% applications.forEach(application =>
     { %>
+      <a href="/job/<%= application.job._id %>" style="text-decoration: none; color: black;" >
     <div class="card my-3">
       <div class="card-header">
         <h3><%= application.job.title %></h3>
@@ -23,7 +24,7 @@
           || "N/A" %>
         </p>
       </div>
-    </div>
+    </div></a>
     <% }); %> <% } else { %>
     <p>You haven't applied for any jobs yet.</p>
     <% } %>
