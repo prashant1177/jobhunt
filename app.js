@@ -6,6 +6,8 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const passport = require("./config/passport"); // Adjust path as needed
 
+const MongoDBStore = require('connect-mongodb-session')(session);
+
 const flash = require("connect-flash");
 
 const bodyParser = require("body-parser");
@@ -17,11 +19,19 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+const store = new MongoDBStore({
+  uri: 'mongodb://localhost:27017/job-search-platform',
+  collection: 'sessions'
+});
+
 app.use(
   session({
-    secret: "secretcode", // Use a secure secret
+    secret: "secretcode", 
     resave: false,
     saveUninitialized: false,
+    store: store,
+    cookie: { secure: process.env.NODE_ENV === 'production' }, 
   })
 );
 
@@ -39,9 +49,7 @@ const Application = require("./models/application");
 
 // Connect to MongoDB
 mongoose
-  .connect("mongodb://localhost:27017/job-search-platform", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+  .connect("mongodb+srv://prashu49pj:1bKZAXtSHy5dwfah@jobhunt.rjgd1.mongodb.net/?retryWrites=true&w=majority&appName=jobhunt", { 
   })
   .then(() => {
     console.log("Connected to MongoDB");
@@ -414,4 +422,7 @@ app.post("/jobs/:id/delete", async (req, res) => {
   }
 });
 
-app.listen(3000);
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
+});

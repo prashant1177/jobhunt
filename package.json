@@ -1,8 +1,9 @@
 {
   "name": "a_project",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -14,13 +15,16 @@
     "bcrypt": "^5.1.1",
     "boilerplate": "^0.6.1",
     "connect-flash": "^0.1.1",
+    "connect-mongodb-session": "^5.0.0",
     "ejs": "^3.1.10",
     "ejs-mate": "^4.0.0",
     "express": "^4.21.2",
     "express-session": "^1.18.1",
-    "mongoose": "^8.9.2",
+    "mongodb": "^6.12.0",
+    "mongoose": "^8.9.3",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "serverless-http": "^3.2.0"
   }
 }
