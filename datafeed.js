@@ -5,7 +5,7 @@ const User = require("./models/user");
 const Job = require('./models/job');
 const Application = require("./models/application");
 
-mongoose.connect("mongodb://localhost:27017/job-search-platform", {
+mongoose.connect("mongodb+srv://prashu49pj:1bKZAXtSHy5dwfah@jobhunt.rjgd1.mongodb.net/?retryWrites=true&w=majority&appName=jobhunt", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
