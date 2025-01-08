@@ -5,10 +5,12 @@ const path = require("path");
 const mongoose = require("mongoose");
 const session = require("express-session");
 const passport = require("./config/passport"); // Adjust path as needed
+require('dotenv').config(); // Add this line at the top
 
-const MongoDBStore = require('connect-mongodb-session')(session);
+// const MongoDBStore = require('connect-mongodb-session')(session);
 
 const flash = require("connect-flash");
+// const bcrypt = require('bcryptjs');
 
 const bodyParser = require("body-parser");
 app.engine("ejs", engine);
@@ -20,18 +22,15 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-const store = new MongoDBStore({
-  uri: 'mongodb://localhost:27017/job-search-platform',
-  collection: 'sessions'
-});
+
+
 
 app.use(
   session({
-    secret: "secretcode", 
+    secret: process.env.SESSION_SECRET || "secretcode",
     resave: false,
     saveUninitialized: false,
-    store: store,
-    cookie: { secure: process.env.NODE_ENV === 'production' }, 
+    cookie: { secure: process.env.NODE_ENV === 'production' },
   })
 );
 
@@ -49,8 +48,7 @@ const Application = require("./models/application");
 
 // Connect to MongoDB
 mongoose
-  .connect("mongodb+srv://prashu49pj:1bKZAXtSHy5dwfah@jobhunt.rjgd1.mongodb.net/?retryWrites=true&w=majority&appName=jobhunt", { 
-  })
+  .connect(process.env.MONGODB_URI)
   .then(() => {
     console.log("Connected to MongoDB");
   })
@@ -64,6 +62,7 @@ app.use((req, res, next) => {
   res.locals.errorMessages = req.flash("error");
   next();
 });
+
 
 app.get("/", async function (req, res) {
   try {
@@ -96,6 +95,12 @@ app.get("/", async function (req, res) {
     res.status(500).send("Internal Server Error");
   }
 });
+
+// app.get("/", function (req, res) {
+//   console.log("Working...");
+//   res.send("This is working");
+// });
+
 
 app.get("/contact", async function (req, res) {
   res.render("contact.ejs");

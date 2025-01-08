@@ -1,9 +1,12 @@
 {
   "name": "a_project",
   "version": "1.0.0",
-  "main": "app.js",
+  "main": "index.js",
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
-    "start": "node app.js",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -11,11 +14,14 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@vercel/node": "^5.0.2",
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
     "boilerplate": "^0.6.1",
     "connect-flash": "^0.1.1",
     "connect-mongodb-session": "^5.0.0",
+    "dotenv": "^16.4.7",
     "ejs": "^3.1.10",
     "ejs-mate": "^4.0.0",
     "express": "^4.21.2",
