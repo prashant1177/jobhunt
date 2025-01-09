@@ -1,3 +1,5 @@
+
+require("dotenv").config(); // Add this line at the top
 var express = require("express"),
   engine = require("ejs-mate"),
   app = express();
@@ -5,9 +7,9 @@ const path = require("path");
 const mongoose = require("mongoose");
 const session = require("express-session");
 const passport = require("./config/passport"); // Adjust path as needed
-require('dotenv').config(); // Add this line at the top
 
-// const MongoDBStore = require('connect-mongodb-session')(session);
+
+const MongoDBStore = require("connect-mongodb-session")(session);
 
 const flash = require("connect-flash");
 // const bcrypt = require('bcryptjs');
@@ -22,22 +24,44 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+const store = new MongoDBStore({
+  uri: process.env.MONGODB_URI,
+  collection: "sessions",
+});
 
+
+passport.serializeUser((user, done) => {
+  done(null, user.id); // Save user ID in session
+});
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findById(id); // Find user by ID
+    done(null, user); // Attach user to req.user
+  } catch (err) {
+    done(err);
+  }
+});
 
 
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "secretcode",
+    store: store,
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: process.env.NODE_ENV === 'production' },
+    cookie: { secure: process.env.NODE_ENV === "production",
+      httpOnly: true, secure: false, maxAge: 3600000 },
   })
 );
-
 app.use(passport.initialize());
 app.use(passport.session());
+
+
+
+
 app.use((req, res, next) => {
-  res.locals.user = req.user || null; // Pass user to all views
+  res.locals.user = req.user || null;
   next();
 });
 
@@ -63,7 +87,6 @@ app.use((req, res, next) => {
   next();
 });
 
-
 app.get("/", async function (req, res) {
   try {
     // Fetch all unique skills from jobs
@@ -87,7 +110,7 @@ app.get("/", async function (req, res) {
     }
 
     const userDetails = req.user ? await User.findById(req.user._id) : null;
-
+    console.log(userDetails);
     // Render the page with jobs and skills
     res.render("index.ejs", { jobs, allSkills, user: userDetails });
   } catch (error) {
@@ -95,11 +118,6 @@ app.get("/", async function (req, res) {
     res.status(500).send("Internal Server Error");
   }
 });
-
-// app.get("/", function (req, res) {
-//   console.log("Working...");
-//   res.send("This is working");
-// });
 
 
 app.get("/contact", async function (req, res) {
@@ -263,10 +281,9 @@ app.get("/profile", async (req, res) => {
   }
 });
 
-
 app.get("/applicant/:id", async (req, res) => {
   try {
-    const userId = req.params.id;  // Get the user ID from the URL
+    const userId = req.params.id; // Get the user ID from the URL
     const userDetails = await User.findById(userId);
 
     if (!userDetails) {
@@ -276,12 +293,11 @@ app.get("/applicant/:id", async (req, res) => {
     res.render("viewapplicant.ejs", { userDetails });
   } catch (err) {
     console.error(err);
-    res.status(500).send("An error occurred while fetching the applicant's profile.");
+    res
+      .status(500)
+      .send("An error occurred while fetching the applicant's profile.");
   }
 });
-
-
-
 
 app.get("/my-applications", async (req, res) => {
   try {
@@ -389,17 +405,20 @@ app.get("/job/:id/applications", async (req, res) => {
     const job = await Job.findById(jobId);
 
     // Fetch applications for the specific job
-    const applications = await Application.find({ job: jobId }).populate('applicant');
+    const applications = await Application.find({ job: jobId }).populate(
+      "applicant"
+    );
 
-    res.render('jobs/viewapplications.ejs', { job, applications, userAuth: req.user && job.postedBy.toString() === req.user._id.toString() });
+    res.render("jobs/viewapplications.ejs", {
+      job,
+      applications,
+      userAuth: req.user && job.postedBy.toString() === req.user._id.toString(),
+    });
   } catch (error) {
     console.error("Error fetching job applications:", error);
     res.status(500).send("An error occurred while fetching applications.");
   }
 });
-
-
-
 
 // Delete
 app.post("/jobs/:id/delete", async (req, res) => {

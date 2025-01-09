@@ -23,11 +23,14 @@ passport.use(
 
 // Serialize user
 passport.serializeUser((user, done) => {
+    console.log("Serializing user:", user);
     done(null, user.id);
 });
 
 // Deserialize user
 passport.deserializeUser(async (id, done) => {
+    console.log("Deserializing user ID:", id);
+
     try {
         const user = await User.findById(id);
         done(null, user);
