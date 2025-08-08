@@ -1,0 +1,26 @@
+<!-- views/candidates.ejs -->
+<% layout('./layout/boilerplate.ejs') -%>
+
+<section class="bg-light p-5">
+  <h2 class="mb-4">Job Seekers</h2>
+
+  <% if (candidates.length === 0) { %>
+  <p>No candidates found.</p>
+  <% } else { %>
+  <ul class="list-group">
+    <% candidates.forEach(candidate => { %>
+    <li class="list-group-item">
+      <strong>Name:</strong> <%= candidate.name %> <br />
+      <strong>Email:</strong> <%= candidate.email %> <br />
+      <strong>Location:</strong> <%= candidate.profile.location || 'N/A' %>
+      <br />
+      <strong>Bio:</strong> <%= candidate.profile.bio || 'N/A' %> <br />
+      <strong>Skills:</strong> <% candidate.profile.skills.forEach(skill => { %>
+      <span><%= skill%></span>
+
+      <% }) %>
+    </li>
+    <% }) %>
+  </ul>
+  <% } %>
+</section>

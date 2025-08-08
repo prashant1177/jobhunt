@@ -1,0 +1,233 @@
+<% layout('./layout/boilerplate.ejs') -%>
+<body>
+  <section class="bg-light">
+    <div class="container py-5 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-12 col-md-10">
+          <div class="card text-black" style="border-radius: 1rem">
+            <div class="card-body p-5">
+              <div class="mb-md-5 mt-md-4 pb-5">
+                <h2 class="fw-bold mb-2 text-uppercase text-center">
+                  Create New User
+                </h2>
+                <form action="/signup/student" method="POST" class="mt-4">
+                  <!-- Name -->
+                  <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input
+                      type="text"
+                      name="name"
+                      id="name"
+                      class="form-control"
+                      required
+                    />
+                  </div>
+
+                  <!-- Email -->
+                  <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input
+                      type="email"
+                      name="email"
+                      id="email"
+                      class="form-control"
+                      required
+                    />
+                  </div>
+
+                  <!-- Password -->
+                  <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input
+                      type="password"
+                      name="password"
+                      id="password"
+                      class="form-control"
+                      required
+                    />
+                  </div>
+
+                  <!-- Job Seeker Fields -->
+                  <div id="jobSeekerFields" style="display: block">
+                    <!-- Skills -->
+                    <div class="mb-3">
+                      <label for="skills" class="form-label">Skills</label>
+                      <input
+                        type="text"
+                        name="skills"
+                        id="skills"
+                        class="form-control"
+                        placeholder="Comma-separated skills"
+                      />
+                    </div>
+
+                    <!-- Education -->
+                    <div class="mb-3">
+                      <label class="form-label">Education</label>
+                      <div class="border rounded p-3">
+                        <input
+                          type="text"
+                          name="education[degree]"
+                          placeholder="Degree"
+                          class="form-control mb-2"
+                        />
+                        <input
+                          type="text"
+                          name="education[institution]"
+                          placeholder="Institution"
+                          class="form-control mb-2"
+                        />
+                        <input
+                          type="number"
+                          name="education[yearOfPassing]"
+                          placeholder="Year of Passing"
+                          class="form-control mb-2"
+                        />
+                        <input
+                          type="number"
+                          name="education[cgpa]"
+                          placeholder="Current CGPA"
+                          class="form-control"
+                          min="0"
+                          max="10"
+                          step="0.01"
+                        />
+                      </div>
+                    </div>
+
+                    <!-- Experience -->
+                    <div class="mb-3">
+                      <label class="form-label">Experience</label>
+                      <div class="border rounded p-3">
+                        <input
+                          type="text"
+                          name="experience[0][company]"
+                          placeholder="Company"
+                          class="form-control mb-2"
+                        />
+                        <input
+                          type="text"
+                          name="experience[0][jobrole]"
+                          placeholder="Job Role"
+                          class="form-control mb-2"
+                        />
+                        <label>Start Date</label>
+                        <input
+                          type="date"
+                          name="experience[0][startDate]"
+                          class="form-control mb-2"
+                        />
+                        <label>End Date</label>
+                        <input
+                          type="date"
+                          name="experience[0][endDate]"
+                          class="form-control mb-2"
+                        />
+                        <textarea
+                          name="experience[0][description]"
+                          placeholder="Description"
+                          class="form-control"
+                        ></textarea>
+                      </div>
+                    </div>
+
+                    <!-- Projects -->
+                    <div class="mb-3">
+                      <label class="form-label">Projects</label>
+                      <div class="border rounded p-3">
+                        <input
+                          type="text"
+                          name="projects[0][title]"
+                          placeholder="Project Title"
+                          class="form-control mb-2"
+                        />
+                        <textarea
+                          name="projects[0][description]"
+                          placeholder="Project Description"
+                          class="form-control mb-2"
+                        ></textarea>
+                        <input
+                          type="text"
+                          name="projects[0][techStack]"
+                          placeholder="Tech Stack (comma-separated)"
+                          class="form-control mb-2"
+                        />
+                        <input
+                          type="url"
+                          name="projects[0][link]"
+                          placeholder="Project Link"
+                          class="form-control"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Employer Fields -->
+                  <div id="employerFields" style="display: none">
+                    <div class="mb-3">
+                      <label for="company" class="form-label"
+                        >Company Name</label
+                      >
+                      <input
+                        type="text"
+                        name="company"
+                        id="company"
+                        class="form-control"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- Common Fields -->
+                  <div class="mb-3">
+                    <label for="bio" class="form-label">Bio</label>
+                    <textarea
+                      name="bio"
+                      id="bio"
+                      class="form-control"
+                      rows="3"
+                    ></textarea>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="location" class="form-label">Location</label>
+                    <input
+                      type="text"
+                      name="location"
+                      id="location"
+                      class="form-control"
+                    />
+                  </div>
+
+                  <!-- Submit Button -->
+                  <button
+                    type="submit"
+                    class="btn btn-outline-dark btn-lg px-5 mt-4"
+                  >
+                    Create User
+                  </button>
+                </form>
+              </div>
+
+              <div>
+                <p class="mb-0">
+                  Already have an account?
+                  <a href="/login" class="text-black-50 fw-bold">Login</a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    function toggleFields() {
+      const role = document.getElementById("role").value;
+      document.getElementById("jobSeekerFields").style.display =
+        role === "jobSeeker" ? "block" : "none";
+      document.getElementById("employerFields").style.display =
+        role === "employer" ? "block" : "none";
+    }
+  </script>
+</body>

@@ -1,4 +1,3 @@
-
 require("dotenv").config(); // Add this line at the top
 var express = require("express"),
   engine = require("ejs-mate"),
@@ -7,7 +6,6 @@ const path = require("path");
 const mongoose = require("mongoose");
 const session = require("express-session");
 const passport = require("./config/passport"); // Adjust path as needed
-
 
 const MongoDBStore = require("connect-mongodb-session")(session);
 
@@ -29,20 +27,18 @@ const store = new MongoDBStore({
   collection: "sessions",
 });
 
-
 passport.serializeUser((user, done) => {
   done(null, user.id); // Save user ID in session
 });
 
 passport.deserializeUser(async (id, done) => {
   try {
-    const user = await User.findById(id); // Find user by ID
+    const user = (await Student.findById(id)) || (await Recruiter.findById(id)); // Find user by ID
     done(null, user); // Attach user to req.user
   } catch (err) {
     done(err);
   }
 });
-
 
 app.use(
   session({
@@ -50,15 +46,16 @@ app.use(
     store: store,
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: process.env.NODE_ENV === "production",
-      httpOnly: true, secure: false, maxAge: 3600000 },
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+      secure: false,
+      maxAge: 3600000,
+    },
   })
 );
 app.use(passport.initialize());
 app.use(passport.session());
-
-
-
 
 app.use((req, res, next) => {
   res.locals.user = req.user || null;
@@ -66,7 +63,8 @@ app.use((req, res, next) => {
 });
 
 app.use(flash());
-const User = require("./models/user");
+const Student = require("./models/student");
+const Recruiter = require("./models/recruiter");
 const Job = require("./models/job");
 const Application = require("./models/application");
 
@@ -109,7 +107,9 @@ app.get("/", async function (req, res) {
       jobs = await Job.find();
     }
 
-    const userDetails = req.user ? await User.findById(req.user._id) : null;
+    const userDetails = req.user
+      ? await Recruiter.findById(req.user._id)
+      : null;
     console.log(userDetails);
     // Render the page with jobs and skills
     res.render("index.ejs", { jobs, allSkills, user: userDetails });
@@ -119,7 +119,6 @@ app.get("/", async function (req, res) {
   }
 });
 
-
 app.get("/contact", async function (req, res) {
   res.render("contact.ejs");
 });
@@ -128,31 +127,68 @@ app.get("/about", async function (req, res) {
   res.render("about.ejs");
 });
 
-app.get("/signup", (req, res) => {
-  res.render("user/newuser.ejs");
+app.get("/signup/student", (req, res) => {
+  res.render("user/newStudent.ejs");
 });
 
-app.post("/signup", async (req, res) => {
+app.post("/signup/student", async (req, res) => {
   try {
-    const { name, email, password, role, skills, company, bio, location } =
-      req.body;
-
-    // Prepare profile based on role
-    const profile = {};
-    if (role === "jobSeeker") {
-      profile.skills = skills
-        ? skills.split(",").map((skill) => skill.trim())
-        : [];
-    } else if (role === "employer") {
-      profile.company = company;
-    }
-    profile.bio = bio;
-    profile.location = location;
-
+    const {
+      name,
+      email,
+      password,
+      skills,
+      education,
+      experience,
+      projects,
+      bio,
+      location,
+    } = req.body;
+    const role = "jobSeeker"; // Default role for recruiters
     // Create and save user
-    const newUser = new User({ name, email, password, role, profile });
-    await newUser.save();
-    res.send("User created successfully!");
+    const newStudent = new Student({
+      name,
+      email,
+      password,
+      role,
+      skills,
+      education,
+      experience,
+      projects,
+      bio,
+      location,
+    });
+    await newStudent.save();
+    console.log("Recruiter created successfully:", newStudent);
+    res.send("Recruiter created successfully!");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error creating user");
+  }
+});
+app.get("/signup/recruiter", (req, res) => {
+  res.render("user/newRecruiter.ejs");
+});
+
+app.post("/signup/recruiter", async (req, res) => {
+  try {
+    const { name, email, password, companysize, company, bio, location } =
+      req.body;
+    const role = "recruiter"; // Default role for recruiters
+    // Create and save user
+    const newRecruiter = new Recruiter({
+      name,
+      email,
+      password,
+      role,
+      company,
+      bio,
+      location,
+      companysize,
+    });
+    await newRecruiter.save();
+    console.log("Recruiter created successfully:", newRecruiter);
+    res.send("Recruiter created successfully!");
   } catch (err) {
     console.error(err);
     res.status(500).send("Error creating user");
@@ -194,6 +230,29 @@ app.get("/jobs/:id/apply", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send("An error occurred while fetching the job details.");
+  }
+});
+
+app.get("/candidates/:id", async (req, res) => {
+  try {
+    const job = await Job.findById(req.params.id);
+
+    const jobSkills = job.skills.map((skill) => new RegExp(`^${skill}$`, "i"));
+
+    const candidates = await Student.find({
+      "profile.skills": { $all: jobSkills },
+    });
+
+    if (!candidates) {
+      return res.status(404).send("Job not found.");
+    }
+
+    res.render("candidates.ejs", { candidates });
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .send("An error occurred while fetching the candidates details.");
   }
 });
 
@@ -258,7 +317,10 @@ app.get("/profile", async (req, res) => {
 
     // Fetch applications made by the logged-in user
 
-    const userDetails = req.user ? await User.findById(req.user._id) : null;
+    const userDetails = req.user
+      ? (await Student.findById(req.user._id)) ||
+        (await Recruiter.findById(req.user._id))
+      : null;
     const applications = await Application.find({
       applicant: req.user._id,
     }).populate("job");
@@ -284,7 +346,7 @@ app.get("/profile", async (req, res) => {
 app.get("/applicant/:id", async (req, res) => {
   try {
     const userId = req.params.id; // Get the user ID from the URL
-    const userDetails = await User.findById(userId);
+    const userDetails = await Student.findById(userId);
 
     if (!userDetails) {
       return res.status(404).send("User not found.");

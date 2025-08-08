@@ -9,7 +9,7 @@ const JobSchema = new Schema({
   skills: { type: [String], required: true },
   exp: { type: String, required: true },
   salary: { type: String, required: true },
-  postedBy: { type: Schema.Types.ObjectId, ref: "User", required: true }, // Reference to the User model
+  postedBy: { type: Schema.Types.ObjectId, ref: "Recruiter", required: true }, // Reference to the User model
 });
 
 module.exports = mongoose.model("Job", JobSchema);
