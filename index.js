@@ -108,7 +108,8 @@ app.get("/", async function (req, res) {
     }
 
     const userDetails = req.user
-      ? await Recruiter.findById(req.user._id)
+      ? (await Student.findById(req.user._id)) ||
+        (await Recruiter.findById(req.user._id))
       : null;
     console.log(userDetails);
     // Render the page with jobs and skills
@@ -317,10 +318,7 @@ app.get("/profile", async (req, res) => {
 
     // Fetch applications made by the logged-in user
 
-    const userDetails = req.user
-      ? (await Student.findById(req.user._id)) ||
-        (await Recruiter.findById(req.user._id))
-      : null;
+    const userDetails = req.user ? await Student.findById(req.user._id) : null;
     const applications = await Application.find({
       applicant: req.user._id,
     }).populate("job");

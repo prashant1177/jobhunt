@@ -1,120 +1,135 @@
 <% layout('./layout/boilerplate.ejs') -%>
-<body>
-  <section>
-    <div class="container py-5">
-      <div class="row">
-        <!-- User Profile Section -->
-        <div class="col-lg-4">
-          <div class="card mb-4">
-            <div class="card-body text-center">
-              <img
-                src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
-                alt="<%= userDetails.name || 'User Avatar' %>"
-                class="rounded-circle img-fluid"
-                style="width: 150px"
-              />
-              <h5 class="my-3"><%= userDetails.name || "Anonymous User" %></h5>
-              <% if (user && user.role == "jobSeeker") { %>
-              <p class="text-muted mb-1">Full Stack Developer</p>
-              <p class="text-muted mb-4"><%= userDetails.email || "N/A" %></p>
-              <% }else{ %>
-                <p class="text-muted mb-1"><%= userDetails.email || "N/A" %></p>
-                <p class="text-muted mb-1"><%= userDetails.bio || "N/A" %></p>
-                <p class="text-muted mb-1"><%= userDetails.location || "N/A" %></p>
-                <% } %>
-              <div class="d-flex justify-content-center mb-2">
-                <button type="button" class="btn btn-primary">Update</button>
-              </div>
-            </div>
-          </div>
 
-          <!-- Skills Section -->
-        <% if (user && user.role == "jobSeeker") { %>
-          <div class="card mb-4 mb-lg-0 p-4">
-            <h3>Skills</h3>
-            <hr />
-            <% if (userDetails?.profile?.skills?.length > 0) { %>
-              <% userDetails.profile.skills.forEach(skill => { %>
-                <p class="text-muted mb-0"><%= skill %></p>
-              <% }); %>
-            <% } else { %>
-              <p class="text-muted">No skills listed.</p>
-            <% } %>
-          </div>
-          <% } %>
-        </div>
+<section class="container my-5">
+  <% if (userDetails) { %>
+  <h1 class="mb-4"><%= userDetails.name %> - Profile</h1>
 
-        <% if (user && user.role == "jobSeeker") { %>
-        <!-- Applications Section -->
-        <div class="col-lg-8">
-         
-          <div>
-            <% if (applications?.length > 0) { %>
-              <% applications.forEach(application => { %>
-                <div class="card mb-3">
-                  <div class="bg-light p-2">
-                    <h3><%= application.job?.title || "Unknown Job" %></h3>
-                  </div>
-                  <div class="card-body">
-                    <p><strong>Company:</strong> <%= application.job?.company || "N/A" %></p>
-                    <p><strong>Location:</strong> <%= application.job?.location || "N/A" %></p>
-                    <p><strong>Applied At:</strong> <%= application.appliedAt?.toDateString() || "N/A" %></p>
-                    <p>
-                      <strong>Resume:</strong> 
-                      <% if (application.resume) { %>
-                        <a href="<%= application.resume %>" target="_blank">View Resume</a>
-                      <% } else { %>
-                        Not Provided
-                      <% } %>
-                    </p>
-                    <p><strong>Additional Details:</strong> <%= application.additionalDetails || "N/A" %></p>
-                  </div>
-                </div>
-              <% }); %>
-            <% } else { %>
-              <p>You haven't applied for any jobs yet.</p>
-            <% } %>
-          </div>
-        </div>
-        <% }else{ %>
-          <div class="col-lg-8">
-            <div class="container">
-              <% if (jobApplications.length > 0) { %>
-                <% jobApplications.forEach(({ job, applications }) => { %>
-                  <div class="card mb-3">
-                    <div class="card-header">
-                      <h3><%= job.title %></h3>
-                    </div>
-                    <div class="card-body">
-                      <p><strong>Company:</strong> <%= job.company %></p>
-                      <p><strong>Location:</strong> <%= job.location %></p>
-                      <p><strong>Applicants:</strong> <%= applications.length %></p>
-                      <% if (applications.length > 0) { %>
-                        <h5>Applications:</h5>
-                        <ul>
-                          <% applications.forEach(application => { %>
-                            <li>
-                              <strong>Applicant:</strong> <%= application.applicant.name %>
-                              <br>
-                              <strong>Resume:</strong> <%= application.resume || "Not Provided" %>
-                              <br>
-                              <strong>Additional Details:</strong> <%= application.additionalDetails || "N/A" %>
-                            </li>
-                          <% }); %>
-                        </ul>
-                      <% } else { %>
-                        <p>No applications yet.</p>
-                      <% } %>
-                    </div>
-                  </div>
-                <% }); %>
-              <% } else { %>
-                <p>You haven't posted any jobs yet.</p>
-              <% } %>
-            </div>
-          <% } %>
-        </div>
-      </div>
+  <!-- Basic Info -->
+  <div class="card p-3 mb-4">
+    <h4>Basic Information</h4>
+    <p><strong>Email:</strong> <%= userDetails.email %></p>
+    <p>
+      <strong>Location:</strong> <%= userDetails.location || "Not specified" %>
+    </p>
+    <p><strong>Bio:</strong> <%= userDetails.bio || "No bio available" %></p>
+  </div>
+
+  <!-- Skills -->
+  <div class="card p-3 mb-4">
+    <h4>Skills</h4>
+    <% if (userDetails.skills && userDetails.skills.length) { %>
+    <ul>
+      <% userDetails.skills.forEach(skill => { %>
+      <li><%= skill %></li>
+      <% }) %>
+    </ul>
+    <% } else { %>
+    <p>No skills listed</p>
+    <% } %>
+  </div>
+
+  <!-- Education -->
+  <div class="card p-3 mb-4">
+    <h4>Education</h4>
+    <% if (userDetails.education) { %>
+    <p><strong>Degree:</strong> <%= userDetails.education.degree %></p>
+    <p>
+      <strong>Institution:</strong> <%= userDetails.education.institution %>
+    </p>
+    <p>
+      <strong>Year of Passing:</strong> <%= userDetails.education.yearOfPassing
+      %>
+    </p>
+    <p><strong>CGPA:</strong> <%= userDetails.education.cgpa %></p>
+    <% } else { %>
+    <p>No education details available</p>
+    <% } %>
+  </div>
+
+  <!-- Experience -->
+  <div class="card p-3 mb-4">
+    <h4>Experience</h4>
+    <% if (userDetails.experience && userDetails.experience.length) { %> <%
+    userDetails.experience.forEach(exp => { %>
+    <div class="mb-3">
+      <p><strong>Company:</strong> <%= exp.company %></p>
+      <p><strong>Role:</strong> <%= exp.jobrole %></p>
+      <p>
+        <strong>Duration:</strong>
+        <%= exp.startDate.toDateString() %> - <%= exp.endDate ?
+        exp.endDate.toDateString() : "Present" %>
+      </p>
+      <p><strong>Description:</strong> <%= exp.description || "N/A" %></p>
     </div>
-  </section>
-</body>
+    <hr />
+    <% }) %> <% } else { %>
+    <p>No work experience added</p>
+    <% } %>
+  </div>
+
+  <!-- Projects -->
+  <div class="card p-3 mb-4">
+    <h4>Projects</h4>
+    <% if (userDetails.projects && userDetails.projects.length) { %> <%
+    userDetails.projects.forEach(project => { %>
+    <div class="mb-3">
+      <p><strong>Title:</strong> <%= project.title %></p>
+      <p><strong>Description:</strong> <%= project.description || "N/A" %></p>
+      <% if (project.techStack && project.techStack.length) { %>
+      <p><strong>Tech Stack:</strong> <%= project.techStack.join(", ") %></p>
+      <% } %> <% if (project.link) { %>
+      <p><a href="<%= project.link %>" target="_blank">View Project</a></p>
+      <% } %>
+    </div>
+    <hr />
+    <% }) %> <% } else { %>
+    <p>No projects listed</p>
+    <% } %>
+  </div>
+
+  <!-- Applications Made -->
+  <div class="card p-3 mb-4">
+    <h4>Applications Made</h4>
+    <% if (applications && applications.length) { %>
+    <ul>
+      <% applications.forEach(app => { %>
+      <li>
+        Applied to: <strong><%= app.job.title %></strong> at <%= app.job.company
+        %>
+      </li>
+      <% }) %>
+    </ul>
+    <% } else { %>
+    <p>No applications found</p>
+    <% } %>
+  </div>
+
+  <!-- Jobs Posted & Applications -->
+  <div class="card p-3 mb-4">
+    <h4>Jobs Posted & Their Applications</h4>
+    <% if (jobApplications && jobApplications.length) { %> <%
+    jobApplications.forEach(jobApp => { %>
+    <div class="mb-4">
+      <h5>Job: <%= jobApp.job.title %></h5>
+      <% if (jobApp.applications && jobApp.applications.length) { %>
+      <ul>
+        <% jobApp.applications.forEach(a => { %>
+        <li>
+          Applicant: <strong><%= a.applicant.name %></strong> - <%=
+          a.applicant.email %>
+        </li>
+        <% }) %>
+      </ul>
+      <% } else { %>
+      <p>No applications for this job yet</p>
+      <% } %>
+    </div>
+    <hr />
+    <% }) %> <% } else { %>
+    <p>No jobs posted</p>
+    <% } %>
+  </div>
+  <% } else { %>
+  <p>User not found or not logged in</p>
+  <% } %>
+</section>
