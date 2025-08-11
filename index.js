@@ -6,7 +6,6 @@ const path = require("path");
 const mongoose = require("mongoose");
 const session = require("express-session");
 const passport = require("./config/passport"); // Adjust path as needed
-
 const MongoDBStore = require("connect-mongodb-session")(session);
 
 const flash = require("connect-flash");
@@ -88,32 +87,37 @@ app.use((req, res, next) => {
 app.get("/", async function (req, res) {
   try {
     // Fetch all unique skills from jobs
-    const allSkills = await Job.distinct("skills");
-    let jobs;
-
-    // Check if skills are selected for filtering
-    const selectedSkills = req.query.skills;
-    if (selectedSkills) {
-      const skillsArray = Array.isArray(selectedSkills)
-        ? selectedSkills.map((skill) => skill.toLowerCase())
-        : [selectedSkills.toLowerCase()];
-
-      // Find jobs matching any of the selected skills
-      jobs = await Job.find({
-        skills: { $in: skillsArray },
-      });
-    } else {
-      // Fetch all jobs if no skills are selected
-      jobs = await Job.find();
-    }
 
     const userDetails = req.user
       ? (await Student.findById(req.user._id)) ||
         (await Recruiter.findById(req.user._id))
       : null;
-    console.log(userDetails);
-    // Render the page with jobs and skills
-    res.render("index.ejs", { jobs, allSkills, user: userDetails });
+
+    if (userDetails == null) {
+      res.render("Landing.ejs");
+    } else {
+      const allSkills = await Job.distinct("skills");
+      let jobs;
+
+      // Check if skills are selected for filtering
+      const selectedSkills = req.query.skills;
+      if (selectedSkills) {
+        const skillsArray = Array.isArray(selectedSkills)
+          ? selectedSkills.map((skill) => skill.toLowerCase())
+          : [selectedSkills.toLowerCase()];
+
+        // Find jobs matching any of the selected skills
+        jobs = await Job.find({
+          skills: { $in: skillsArray },
+        });
+      } else {
+        // Fetch all jobs if no skills are selected
+        jobs = await Job.find();
+      }
+
+      // Render the page with jobs and skills
+      res.render("index.ejs", { jobs, allSkills, user: userDetails });
+    }
   } catch (error) {
     console.error("Error fetching jobs:", error);
     res.status(500).send("Internal Server Error");
@@ -340,7 +344,6 @@ app.get("/profile", async (req, res) => {
     res.status(500).send("An error occurred while loading your applications.");
   }
 });
-
 app.get("/applicant/:id", async (req, res) => {
   try {
     const userId = req.params.id; // Get the user ID from the URL

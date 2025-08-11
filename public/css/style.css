@@ -37,7 +37,8 @@
   color: #648fde;
 }
 
-p,a {
+p,
+a {
   font-family: "Poppins", serif;
   font-weight: 300;
   font-style: normal;
@@ -50,9 +51,20 @@ h3,
 h4,
 h5,
 h6 {
-    font-family: "Poppins", serif;
-    font-weight: 500;
-    font-style: normal;
-  
-    color: #121316;
+  font-family: "Poppins", serif;
+  font-weight: 500;
+  font-style: normal;
+
+  color: #121316;
+}
+
+.hero-bg {
+  background-image: url("../images/home.gif");
+  height: 100vh;
+  background-size: cover;
+}
+
+.hero-trust {
+  width: 100%;
+  background-color: #f3f5f8;
 }
