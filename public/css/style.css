@@ -1,7 +1,9 @@
 .bgColor {
   background-color: #f3f5f8;
 }
-
+.bg-gray {
+  background-color: #f9f9f9;
+}
 .bgText {
   color: #f3f5f8;
 }
@@ -60,10 +62,15 @@ h6 {
 
 .hero-bg {
   background-image: url("../images/home.gif");
-  height: 100vh;
   background-size: cover;
 }
 
+.img-fluid-about {
+  width: 100%;
+  height: 100%;
+  background-image: url("https://images.unsplash.com/photo-1452457750107-cd084dce177d?q=80&w=2001&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+  background-size: cover;
+}
 .hero-trust {
   width: 100%;
   background-color: #f3f5f8;
